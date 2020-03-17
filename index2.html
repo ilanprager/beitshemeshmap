@@ -1,27 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>Beit Shemesh Map Quiz</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
-<style>
-	body { margin: 0; padding: 0; }
-	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
+    <meta charset="utf-8"/>
+    <title>Beit Shemesh Map Quiz</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #features {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 50%;
+            overflow: auto;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        #map canvas {
+            cursor: crosshair;
+        }
+    </style>
 </head>
 <body>
 <div id="map"></div>
+<pre id="features"></pre>
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoiaXByYWdlciIsImEiOiJjazd0NWh3NmcwdW5yM2xvdTNyaG04cXNjIn0.OaAMN7LX88jf8GbZtNgn0Q';
-var map = new mapboxgl.Map({
-container: 'map', // container id
-style: 'mapbox://styles/iprager/ck7t5sywx4b5q1imt7ea6113i', // stylesheet location
-center: [34.987994, 31.747666], // starting position [lng, lat]
-zoom: 13 // starting zoom
-});
+	var map = new mapboxgl.Map({
+		container: 'map', // container id
+		style: 'mapbox://styles/iprager/ck7t5sywx4b5q1imt7ea6113i', // stylesheet location
+		center: [34.987994, 31.747666], // starting position [lng, lat]
+		zoom: 14 // starting zoom
+	});
+
+
+	map.on('mousemove', function (e) {
+		var features = map.queryRenderedFeatures(e.point);
+
+		var displayProperties = [
+			'type',
+			'properties',
+			'id',
+			'layer',
+			'source',
+			'sourceLayer',
+			'state'
+		];
+
+		var displayFeatures = features.map(function (feat) {
+			var displayFeat = {};
+			displayProperties.forEach(function (prop) {
+				displayFeat[prop] = feat[prop];
+			});
+			return displayFeat;
+		});
+
+		document.getElementById('features').innerHTML = JSON.stringify(
+			displayFeatures,
+			null,
+			2
+		);
+	});
+
 </script>
- 
+
 </body>
 </html>
